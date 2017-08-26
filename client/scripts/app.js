@@ -2,9 +2,15 @@ var Message = function() {};
 
 var app = {};
 
+app.server = 'http://parse.atx.hackreactor.com/chatterbox/classes/messages'
+
+app.messages = [];
+
+app.lastMessageID = 0;
+
 app.send = function (message) {
   $.ajax({
-    url: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages',
+    url: app.server,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/json',
@@ -19,12 +25,22 @@ app.send = function (message) {
 
 app.fetch = function(message) {
   $.ajax({
-    url: 'http://parse.atx.hackreactor.com/chatterbox/classes/messages',
+    url: app.server,
     type: 'GET',
-    data: JSON.stringify(message),
-    contentType: 'application/json',
+    //data: JSON.stringify(message),
+    //contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Messages retrieved', data);
+      if (!data.results || !data.results.length) {return};
+      app.messages = data.results;
+
+      var mostRecentMessage = data.results[data.results.length - 1];
+
+      if (mostRecentMessage.objectId !== app.lastMessageID) {
+        app.clearMessages();
+
+        
+      }
     },
     error: function (data) {
       console.error('chatterbox: Failed to retreive messages', data);
@@ -35,7 +51,9 @@ app.fetch = function(message) {
 
 app.init = function() {};
 
-app.clearMessages = function() {};
+app.clearMessages = function() {
+  $('chats').html('');
+};
 
 app.renderMessage = function(message) {
 
