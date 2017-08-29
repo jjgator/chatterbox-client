@@ -1,18 +1,16 @@
-var Message = function() {};
+const Message = function() {};
 
-var app = {};
+const app = {};
 
 app.server = 'http://parse.atx.hackreactor.com/chatterbox/classes/messages'
-
 app.messages = [];
-
 app.lastMessageID = 0;
 
 app.send = function (message) {
   $.ajax({
     url: app.server,
     type: 'POST',
-    data: JSON.stringify(message),
+    data: message,
     contentType: 'application/json',
     success: function (data) {
       console.log('chatterbox: Message sent', data, message);
@@ -27,19 +25,15 @@ app.fetch = function(message) {
   $.ajax({
     url: app.server,
     type: 'GET',
-    //data: JSON.stringify(message),
-    //contentType: 'application/json',
     success: function (data) {
-      console.log('chatterbox: Messages retrieved', data);
+      // console.log('chatterbox: Messages retrieved', data);
       if (!data.results || !data.results.length) {return};
       app.messages = data.results;
 
-      var mostRecentMessage = data.results[data.results.length - 1];
+      const mostRecentMessage = data.results[data.results.length - 1];
 
       if (mostRecentMessage.objectId !== app.lastMessageID) {
         app.clearMessages();
-
-        
       }
     },
     error: function (data) {
@@ -48,31 +42,50 @@ app.fetch = function(message) {
   });
 };
 
-
 app.init = function() {};
 
 app.clearMessages = function() {
-  $('chats').html('');
+  $('#chats').html('');
 };
 
 app.renderMessage = function(message) {
+  const messageDiv = '<div class="message"><span class="username">' + message.username + '</span>: ' + message.text + '</div>';
+  $('#chats').html(messageDiv);
 
-  var $message = $("<div>", {class: "message"});
-   
-  $('#chats').prepend($message);
-  
+  $('.username').on('click', function(e) {
+    app.handleUsernameClick();
+  });
 };
 
-app.renderRoom = function() {};
+app.renderRoom = function(room) {
+  const roomOption = '<option class="roomname">' + room + '</option>';
+  $('#roomSelect').append(roomOption);
+};
 
-$('.submitbutton').on('click', function() {
-  var newMessage = new Message();
+app.handleUsernameClick = function() {
+ return;
+};
 
-  newMessage.username = window.location.search;
-  newMessage.text = $('#chatterField').val();
-  newMessage.roomname = $('[selected="selected"]').val();
+app.handleSubmit = function() {
+ return;
+};
 
-  app.send(newMessage);
-  //app.fetch();
-  app.renderMessage(newMessage);
+$( document ).ready(function() {
+  $('.submitbutton').on('click', function(e) {
+    const newMessage = new Message();
+
+    newMessage.username = decodeURI(window.location.search.split('=')[1]);
+    newMessage.text = $('#chatterField').val();
+    newMessage.roomname = $('[selected="selected"]').val();
+
+    app.send(newMessage);
+    //app.fetch();
+    app.renderMessage(newMessage);
+
+    return false;
+  });
+
+  $('#send .submit').submit(function(e) {
+    app.handleSubmit();
+  });
 });

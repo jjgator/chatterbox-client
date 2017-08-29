@@ -23,19 +23,16 @@
     <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
   </head>
-  <body>
+  <body id="send">
     <div id="main">
       <h1>chatterbox</h1>
       <ul></ul>
-      <form>
+      <form class="submit">
         <p>Put your chitter chatter here!</p>
         <input type="text" maxlength="141" id="chatterField"></input>
-        <select name="rooms">
-          <option value="bedroom">Bedroom</option>
-          <option value="livingroom">Living Room</option>
-          <option value="kitchen">Kitchen</option>
+        <select id="roomSelect" name="rooms">
         </select>
-        <input type="submit" name="Submit" maxlength="141" class="submitbutton"></input>
+        <input type="submit" name="Submit" class="submitbutton"></input>
       </form>
     </div>
     <div id="chats"></div>
