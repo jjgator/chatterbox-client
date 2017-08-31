@@ -21,7 +21,7 @@ app.send = function (message) {
   });
 };
 
-app.fetch = function(message) {
+app.fetch = function() {
   $.ajax({
     url: app.server,
     type: 'GET',
@@ -35,6 +35,9 @@ app.fetch = function(message) {
       if (mostRecentMessage.objectId !== app.lastMessageID) {
         app.clearMessages();
       }
+      app.messages.forEach(function(message) {
+        app.renderMessage(message);
+      });
     },
     error: function (data) {
       console.error('chatterbox: Failed to retreive messages', data);
@@ -42,7 +45,9 @@ app.fetch = function(message) {
   });
 };
 
-app.init = function() {};
+app.init = function() {
+  app.fetch();
+};
 
 app.clearMessages = function() {
   $('#chats').html('');
@@ -88,4 +93,5 @@ $( document ).ready(function() {
   $('#send .submit').submit(function(e) {
     app.handleSubmit();
   });
+  app.init();
 });
